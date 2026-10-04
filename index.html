@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🧙‍♀️ Witch Calls!</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 24px; padding: 20px; text-align: center;
+    background: radial-gradient(circle at top, #4b2a7b, #1a0b2e);
+    color: #fff; font-family: "Trebuchet MS", sans-serif;
+  }
+  h1 { font-size: 1.4rem; opacity: .8; letter-spacing: 1px; }
+  #card {
+    width: 100%; max-width: 600px; min-height: 240px;
+    background: #fff2; border: 3px solid #c9a0ff; border-radius: 28px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; gap: 10px;
+  }
+  #emoji { font-size: 4rem; }
+  #intro { font-size: 1.3rem; color: #c9a0ff; }
+  #phrase { font-size: 2.6rem; font-weight: bold; line-height: 1.15; color: #ffe66d; }
+  button {
+    font-size: 1.8rem; font-weight: bold; padding: 18px 40px;
+    border: none; border-radius: 50px; cursor: pointer;
+    background: #ff7a00; color: #fff; box-shadow: 0 6px 0 #b35200;
+  }
+  button:active { transform: translateY(4px); box-shadow: 0 2px 0 #b35200; }
+  #count { opacity: .6; font-size: .9rem; }
+  .pop { animation: pop .35s ease; }
+  @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+  <h1>🧙‍♀️ WITCH CALLS!</h1>
+  <div id="card">
+    <div id="emoji">🔮</div>
+    <div id="intro">Ready?</div>
+    <div id="phrase">Tap the button!</div>
+  </div>
+  <button onclick="callIt()">✨ Witch calls!</button>
+  <div id="count"></div>
+
+<script>
+  const calls = [
+    // Capelli
+    ["💛", "blond hair"], ["🤎", "brown hair"], ["🖤", "black hair"], ["🧡", "red hair"],
+    ["💇", "long hair"], ["💇", "short hair"], ["🌀", "curly hair"], ["📏", "straight hair"],
+    ["🎀", "a ponytail"], ["🎀", "a hair clip"], ["👧", "a fringe"],
+    // Occhi
+    ["💙", "blue eyes"], ["💚", "green eyes"], ["🤎", "brown eyes"], ["👓", "glasses"],
+    // Vestiti
+
+    ["👕", "a T-shirt"], ["🧥", "a hoodie"], ["🧥", "a jacket"], ["👖", "jeans"],
+    ["🩳", "shorts"], ["👟", "trainers"], ["🧦", "white socks"], ["🧢", "a cap"],
+    ["👕", "short sleeves"], ["👕", "long sleeves"], ["🥾", "shoes with laces"],
+    ["🦄", "a picture on the T-shirt"], ["👖", "a pocket"],
+    // Accessori
+    ["⌚", "a watch"], ["📿", "a bracelet"], ["💍", "a ring"], ["🎒", "a backpack"],
+    // Parti del corpo / azioni
+    ["🦷", "a missing tooth"], ["🦷", "braces"], ["🩹", "a plaster"],
+    ["🦶", "big feet"], ["💪", "a scar on the knee"],
+    ["👂", "pierced ears"], ["✋", "painted nails"],
+    // Numeri / lettere
+    ["🔤", "a name with the letter A"], ["🔤", "a name with the letter M"],
+    ["🎂", "a birthday in summer"], ["🎂", "a birthday in winter"],
+    ["👟", "two colours on your clothes"], ["🌈", "three colours on your clothes"]
+  ];
+
+  let deck = [], used = 0;
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function callIt() {
+    if (deck.length === 0) { deck = shuffle([...calls]); used = 0; }
+    const [emoji, text] = deck.pop();
+    used++;
+    document.getElementById("emoji").textContent = emoji;
+    document.getElementById("intro").textContent = "Witch calls...";
+    const p = document.getElementById("phrase");
+    p.textContent = text.toUpperCase() + "!";
+    p.classList.remove("pop"); void p.offsetWidth; p.classList.add("pop");
+    document.getElementById("count").textContent = "Call " + used + " of " + calls.length;
+  }
+</script>
+</body>
+</html>
