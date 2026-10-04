@@ -3,74 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🧙‍♀️ Witch Calls!</title>
+<title>🧙‍♀️ Point & Crouch!</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4b2a7b">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.png">
 <style>
   * { box-sizing: border-box; margin: 0; }
   body {
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 24px; padding: 20px; text-align: center;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px; padding: 16px;
+    text-align: center; color: #fff; font-family: "Trebuchet MS", sans-serif;
     background: radial-gradient(circle at top, #4b2a7b, #1a0b2e);
-    color: #fff; font-family: "Trebuchet MS", sans-serif;
   }
-  h1 { font-size: 1.4rem; opacity: .8; letter-spacing: 1px; }
+  h1 { font-size: 1.3rem; opacity: .8; letter-spacing: 1px; }
+  #chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 640px; }
+  .chip {
+    font-size: .9rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;
+    border: 2px solid #c9a0ff; background: transparent; color: #c9a0ff;
+    box-shadow: none; font-weight: normal;
+  }
+  .chip.on { background: #c9a0ff; color: #1a0b2e; font-weight: bold; }
   #card {
-    width: 100%; max-width: 600px; min-height: 240px;
+    width: 100%; max-width: 640px; min-height: 260px;
     background: #fff2; border: 3px solid #c9a0ff; border-radius: 28px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 24px; gap: 10px;
   }
   #emoji { font-size: 4rem; }
-  #intro { font-size: 1.3rem; color: #c9a0ff; }
+  #cat { font-size: .95rem; letter-spacing: 2px; color: #c9a0ff; }
+  #intro { font-size: 1.3rem; opacity: .9; }
   #phrase { font-size: 2.6rem; font-weight: bold; line-height: 1.15; color: #ffe66d; }
-  button {
-    font-size: 1.8rem; font-weight: bold; padding: 18px 40px;
-    border: none; border-radius: 50px; cursor: pointer;
-    background: #ff7a00; color: #fff; box-shadow: 0 6px 0 #b35200;
+  #rule { font-size: .95rem; opacity: .7; max-width: 560px; }
+  #go {
+    font-size: 1.8rem; font-weight: bold; padding: 18px 40px; border: none;
+    border-radius: 50px; cursor: pointer; background: #ff7a00; color: #fff;
+    box-shadow: 0 6px 0 #b35200;
   }
-  button:active { transform: translateY(4px); box-shadow: 0 2px 0 #b35200; }
+  #go:active { transform: translateY(4px); box-shadow: 0 2px 0 #b35200; }
   #count { opacity: .6; font-size: .9rem; }
   .pop { animation: pop .35s ease; }
-  @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes pop {
+    0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
 </style>
 </head>
 <body>
-  <h1>🧙‍♀️ WITCH CALLS!</h1>
+  <h1>🧙‍♀️ POINT & CROUCH!</h1>
+  <div id="chips"></div>
   <div id="card">
     <div id="emoji">🔮</div>
-    <div id="intro">Ready?</div>
-    <div id="phrase">Tap the button!</div>
+    <div id="cat">READY?</div>
+    <div id="intro">Tap the button!</div>
+    <div id="phrase">&nbsp;</div>
   </div>
-  <button onclick="callIt()">✨ Witch calls!</button>
+  <div id="rule">Point to someone with this feature. They crouch! If nobody has it: everybody claps! 👏</div>
+  <button id="go" onclick="callIt()">✨ Next call!</button>
   <div id="count"></div>
 
 <script>
-  const calls = [
-    // Capelli
-    ["💛", "blond hair"], ["🤎", "brown hair"], ["🖤", "black hair"], ["🧡", "red hair"],
-    ["💇", "long hair"], ["💇", "short hair"], ["🌀", "curly hair"], ["📏", "straight hair"],
-    ["🎀", "a ponytail"], ["🎀", "a hair clip"], ["👧", "a fringe"],
-    // Occhi
-    ["💙", "blue eyes"], ["💚", "green eyes"], ["🤎", "brown eyes"], ["👓", "glasses"],
-    // Vestiti
+  const cats = {
+    hair:   { label: "💇 Hair" },
+    nose:   { label: "👃 Nose" },
+    eyes:   { label: "👀 Eyes" },
+    mouth:  { label: "😁 Mouth & teeth" },
+    face:   { label: "🙂 Face" },
+    facial: { label: "🧔 Facial hair (trick!)" },
+    extra:  { label: "🤓 Extra" }
+  };
 
-    ["👕", "a T-shirt"], ["🧥", "a hoodie"], ["🧥", "a jacket"], ["👖", "jeans"],
-    ["🩳", "shorts"], ["👟", "trainers"], ["🧦", "white socks"], ["🧢", "a cap"],
-    ["👕", "short sleeves"], ["👕", "long sleeves"], ["🥾", "shoes with laces"],
-    ["🦄", "a picture on the T-shirt"], ["👖", "a pocket"],
-    // Accessori
-    ["⌚", "a watch"], ["📿", "a bracelet"], ["💍", "a ring"], ["🎒", "a backpack"],
-    // Parti del corpo / azioni
-    ["🦷", "a missing tooth"], ["🦷", "braces"], ["🩹", "a plaster"],
-    ["🦶", "big feet"], ["💪", "a scar on the knee"],
-    ["👂", "pierced ears"], ["✋", "painted nails"],
-    // Numeri / lettere
-    ["🔤", "a name with the letter A"], ["🔤", "a name with the letter M"],
-    ["🎂", "a birthday in summer"], ["🎂", "a birthday in winter"],
-    ["👟", "two colours on your clothes"], ["🌈", "three colours on your clothes"]
+  const calls = [
+    // HAIR
+    ["hair","💇","has long hair"], ["hair","💇","has short hair"], ["hair","💇","has medium-length hair"],
+    ["hair","📏","has straight hair"], ["hair","🌊","has wavy hair"], ["hair","🌀","has curly hair"],
+    ["hair","🎀","has a ponytail"], ["hair","💇‍♀️","has a bob"], ["hair","💇","has bangs (a fringe)"],
+    ["hair","💇","has curtain bangs"], ["hair","💈","has a buzz cut"], ["hair","💈","has a crew cut"],
+    ["hair","💇","has a pixie cut"], ["hair","💈","has an undercut"], ["hair","🏖️","has beach waves"],
+    ["hair","💇","has cornrows"],
+    // NOSE
+    ["nose","👃","has a snub nose"], ["nose","👃","has an up-turned nose"], ["nose","👃","has a straight nose"],
+    ["nose","👃","has a small nose"], ["nose","👃","has a pointed nose"],
+    // EYES
+    ["eyes","👁️","has round eyes"], ["eyes","👁️","has almond-shaped eyes"],
+    ["eyes","👁️","has wide-set eyes"], ["eyes","👁️","has up-turned eyes"],
+    ["eyes","👁️","has bright eyes"],
+    // MOUTH & TEETH
+    ["mouth","👄","has a small mouth"], ["mouth","👄","has a wide mouth"],
+    ["mouth","👄","has full lips"], ["mouth","👄","has thin lips"], ["mouth","💋","has heart-shaped lips"],
+    ["mouth","😬","wears braces"], ["mouth","😊","has dimples when smiling"],
+    // FACE
+    ["face","🙂","has a round face"], ["face","🥚","has an oval face"], ["face","🔲","has a square face"],
+    ["face","🔻","has a triangular face"], ["face","😊","has puffy cheeks"],
+    ["face","📌","has a pointy chin"], ["face","💪","has a strong jaw"],
+    ["face","✨","has freckles"], ["face","😁","has dimples"],
+    // FACIAL HAIR (di solito nessuno: tutti battono le mani!)
+    ["facial","🧔","has a beard"], ["facial","👨","has a moustache"],
+    ["facial","🧔","has a goatee"], ["facial","🧔","has stubble"],
+    // EXTRA
+    ["extra","👓","wears glasses"], ["extra","📏","is tall"], ["extra","📏","is short"]
   ];
 
-  let deck = [], used = 0;
+  const active = new Set(Object.keys(cats));
+  let deck = [], used = 0, total = 0;
+
+  // chips
+  const chipBox = document.getElementById("chips");
+  Object.entries(cats).forEach(([k, v]) => {
+    const b = document.createElement("button");
+    b.className = "chip on"; b.textContent = v.label;
+    b.onclick = () => {
+      if (active.has(k)) { if (active.size > 1) { active.delete(k); b.classList.remove("on"); } }
+      else { active.add(k); b.classList.add("on"); }
+      deck = [];
+    };
+    chipBox.appendChild(b);
+  });
 
   function shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
@@ -81,15 +129,19 @@
   }
 
   function callIt() {
-    if (deck.length === 0) { deck = shuffle([...calls]); used = 0; }
-    const [emoji, text] = deck.pop();
+    if (deck.length === 0) {
+      deck = shuffle(calls.filter(c => active.has(c[0])));
+      total = deck.length; used = 0;
+    }
+    const [cat, emoji, text] = deck.pop();
     used++;
     document.getElementById("emoji").textContent = emoji;
-    document.getElementById("intro").textContent = "Witch calls...";
+    document.getElementById("cat").textContent = cats[cat].label.toUpperCase();
+    document.getElementById("intro").textContent = "Point to someone who...";
     const p = document.getElementById("phrase");
-    p.textContent = text.toUpperCase() + "!";
+    p.textContent = text + "!";
     p.classList.remove("pop"); void p.offsetWidth; p.classList.add("pop");
-    document.getElementById("count").textContent = "Call " + used + " of " + calls.length;
+    document.getElementById("count").textContent = "Call " + used + " of " + total;
   }
 </script>
 </body>
